@@ -26,6 +26,7 @@ extern "C" {
 
 #include "Hw.h"
 #include "posix/input.h"
+#include "mount.h"
 
 namespace ZLX 
 {
@@ -48,6 +49,11 @@ namespace ZLX
                 network_init();
             }
             
+            xenon_ata_init();
+            xenon_atapi_init();
+            
+            mount_all_devices();
+            findDevices();
             
             sfcx_init();
             init_flags = flags;

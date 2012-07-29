@@ -1,6 +1,7 @@
 #include "Browser.h"
 #include "Bgshader.h"
 #include "Hw.h"
+#include "mount.h"
 #ifdef LIBXENON
 #include <debug.h>
 #include <xenos/xenos.h>
@@ -439,20 +440,12 @@ namespace ZLX {
 #ifdef WIN32
         strcpy(currentPath, "c:/");
 #else
-        //        strcpy(currentPath, "uda:/");
-        handle = -1;
-        const char * s = NULL;
-        //handle = bdev_enum(handle, &s);
-        if (handle < 0) {
-            TR;
-            strcpy(currentPath, "uda:/");
-        } else {
-            strcpy(currentPath, s);
-            strcat(currentPath, ":/");
-            TR;
+        handle = 0;
+        char path[2048];
+        handle = get_devices(handle, path);
+        
+        strcpy(currentPath, path);
 
-            TR;
-        }
         ScanDir();
 #endif
 
@@ -574,13 +567,11 @@ namespace ZLX {
 #ifdef LIBXENON
                 switch (panelSelected) {
                     case PANEL_FILE_LIST:
-                        const char * s;
-                        do {
-                            //handle = bdev_enum(handle, &s);
-                        } while (handle < 0);
+                        char path[2048];
+                        
+                        handle = get_devices(handle, path);
 
-                        strcpy(currentPath, s);
-                        strcat(currentPath, ":/");
+                        strcpy(currentPath, path);
                         ScanDir();
                         break;
                 }
