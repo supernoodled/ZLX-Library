@@ -254,7 +254,13 @@ int boot_tftp(const char *server_addr, const char *tftp_bootfile) {
         free(elf_raw);
         return res;
     }
+    
+    char * argv[] = {
+        tftp_bootfile
+    };
+    int argc = sizeof (argv) / sizeof (char *);
 
+    elf_setArgcArgv(argc, argv);
     elf_runFromMemory (elf_raw, res);
 
     free(elf_raw);

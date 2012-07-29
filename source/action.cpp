@@ -322,6 +322,12 @@ void ActionFlashNand(const char * filename) {
 
 void ActionLaunchElf(const char * filename) {
 #if 1
+    char * argv[] = {
+        filename,
+    };
+    int argc = sizeof (argv) / sizeof (char *);
+
+    elf_setArgcArgv(argc, argv);
     elf_runFromDisk((char *)filename);
 #else
     char * elf = NULL;
@@ -355,6 +361,12 @@ void ActionLaunchElf(const char * filename) {
         // read elf header ...
         unsigned int elf_header = 0x7F454C46;
         if (memcmp(&elf_header, elf, 4) == 0) {
+            char * argv[] = {
+                filename,
+            };
+            int argc = sizeof (argv) / sizeof (char *);
+
+            elf_setArgcArgv(argc, argv);
             elf_runFromMemory(elf, size);
         } else {
 
