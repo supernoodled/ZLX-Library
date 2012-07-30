@@ -35,6 +35,7 @@ extern "C" {
 #include <math.h>
 
 #include "menu.h"
+#include "mount.h"
 
 using namespace ZLX;
 
@@ -43,6 +44,7 @@ MyConsole App;
 #define MAX_ACTION 16
 int nbAction = 0;
 ActionEntry * ActionEntries[MAX_ACTION];
+static char basepath[256] = {0};
 
 void append_dir_to_path(char * path, char * dir) {
     if (!strcmp(dir, "..")) {
@@ -588,16 +590,31 @@ void MyConsole::Init() {
     progressPct = 0.0f;
 
     InitActionEntry();
-
-    Create("uda:/ressources/", 0xFF0000FF, 0xFFFFFF00);
-    LoadTextureFromFile(g_pVideoDevice, "uda:/ressources/bg.png", &bg);
+	char *ressourcesPath = (char*)malloc(256);
+	char *bgPath = (char*)malloc(256);
+	sprintf(ressourcesPath,"%s/ressources/",basepath);
+	sprintf(bgPath,"%s/ressources/bg.png",basepath);
+    Create(ressourcesPath, 0xFF0000FF, 0xFFFFFF00);
+    LoadTextureFromFile(g_pVideoDevice, bgPath, &bg);
 };
 
-int main() {
+int main(int argc, char **argv) {
+	
+	if(argc != 0 && argv[0]){
+		char *tmp = argv_GetFilepath(argv[0]);
+		strcpy(basepath,tmp);
+	} else {
+		strcpy(basepath,"uda0:");
+	}
+	
     usb_init();
     usb_do_poll();
-    //xenon_ata_init();
-    //xenon_atapi_init();
+    xenon_ata_init();
+    xenon_atapi_init();
+    
+    mount_all_devices();
+    findDevices();
+    
     xenon_smc_start_bootanim();
     sfcx_init();
 
