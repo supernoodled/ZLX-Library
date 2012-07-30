@@ -8,6 +8,7 @@ namespace ZLX {
         static void DrawTexturedRect(float x, float y, float w, float h, ZLXTexture * p_texture);
         static void DrawColoredRect(float x, float y, float w, float h, ZLXColor color);
         static void DrawGradientRect(float x, float y, float w, float h, ZLXColor TopColor, ZLXColor BackColor);
+        static void DrawClipTexturedRect(float x, float y, float w, float h, float top, float bottom, float right, float left, ZLXTexture * p_texture);
         static void Reset();
 
     };

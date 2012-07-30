@@ -174,6 +174,102 @@ namespace ZLX {
 
         
     }
+    
+    void Draw::DrawClipTexturedRect(float x, float y, float w, float h, float top, float bottom, float right, float left, ZLXTexture * p_texture){
+		if (isShaderLoaded == FALSE) {
+            CreateShader();
+        }
+
+        DrawVerticeFormats Rect[6];
+
+        x = (x/(1280/2))-1;
+        y = (y/(720/2))-1;
+        
+        float ratiow = (right-left)/(w/2);
+        float ratioh = (top-bottom)/(h/2);
+
+                    // Uv
+        bottom = bottom/ h;
+        top = top / h;
+        left = left / w;
+        right = right / w;
+        //float bottom = 1.0f;
+        //float top = 0.0f;
+        //float left = 0.0f;
+        //float right = 1.0f;
+
+        // Bottom left
+        Rect[0].x = x;
+        Rect[0].y = y;
+        Rect[0].u = left;
+        Rect[0].v = bottom;
+
+        // top left
+        Rect[1].x = x;
+        Rect[1].y = y + ratioh;
+        Rect[1].u = left;
+        Rect[1].v = top;
+
+        // bottom right
+        Rect[2].x = x + ratiow;
+        Rect[2].y = y;
+        Rect[2].u = right;
+        Rect[2].v = bottom;
+
+        // bottom right
+        Rect[3].x = x + ratiow;
+        Rect[3].y = y;
+        Rect[3].u = right;
+        Rect[3].v = bottom;
+
+        // top left
+        Rect[4].x = x;
+        Rect[4].y = y + ratioh;
+        Rect[4].u = left;
+        Rect[4].v = top;
+
+        // top right
+        Rect[5].x = x + ratiow;
+        Rect[5].y = y + ratioh;
+        Rect[5].u = right;
+        Rect[5].v = top;
+        
+        int len = 6 * sizeof (DrawVerticeFormats);
+#ifndef LIBXENON
+        IDirect3DVertexBuffer9 * vb;
+        void *v;
+        g_pVideoDevice->CreateVertexBuffer(len, 0, 0, D3DPOOL_DEFAULT, &vb, 0);
+        vb->Lock(0, len, (void**) &v, D3DLOCK_NO_DIRTY_UPDATE);
+
+        memcpy(v, Rect, len);
+
+        vb->Unlock();
+
+        g_pVideoDevice->SetTexture(0, p_texture);
+		g_pVideoDevice->SetPixelShader(m_pPixelTexturedShader);
+        g_pVideoDevice->SetVertexShader(m_pVertexShader);
+        g_pVideoDevice->SetVertexDeclaration(m_pVertexDecl);
+        g_pVideoDevice->SetStreamSource(0, vb, 0, sizeof (DrawVerticeFormats));
+
+        g_pVideoDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
+#else
+        //DrawVerticeFormats *v = (DrawVerticeFormats *) malloc(len);
+
+        Xe_VBBegin(g_pVideoDevice, sizeof (DrawVerticeFormats));
+        //memcpy(v, Rect, len);
+        Xe_VBPut(g_pVideoDevice, Rect, len);
+
+        XenosVertexBuffer *vb = Xe_VBEnd(g_pVideoDevice);
+        Xe_VBPoolAdd(g_pVideoDevice, vb);
+        Xe_SetClearColor(g_pVideoDevice, 0x00000000);
+
+        Xe_SetStreamSource(g_pVideoDevice, 0, vb, 0, sizeof (DrawVerticeFormats));
+        Xe_SetTexture(g_pVideoDevice, 0, p_texture);
+        Xe_SetShader(g_pVideoDevice, SHADER_TYPE_PIXEL, m_pPixelTexturedShader, 0);
+        Xe_SetShader(g_pVideoDevice, SHADER_TYPE_VERTEX, m_pVertexShader, 0);
+        Xe_DrawPrimitive(g_pVideoDevice, XE_PRIMTYPE_TRIANGLELIST, 0, 2);
+#endif
+	}
 
     void Draw::DrawColoredRect(float x, float y, float w, float h, ZLXColor color) {
 
