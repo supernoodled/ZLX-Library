@@ -235,24 +235,6 @@ namespace ZLX {
         Rect[5].v = top;
         
         int len = 6 * sizeof (DrawVerticeFormats);
-#ifndef LIBXENON
-        IDirect3DVertexBuffer9 * vb;
-        void *v;
-        g_pVideoDevice->CreateVertexBuffer(len, 0, 0, D3DPOOL_DEFAULT, &vb, 0);
-        vb->Lock(0, len, (void**) &v, D3DLOCK_NO_DIRTY_UPDATE);
-
-        memcpy(v, Rect, len);
-
-        vb->Unlock();
-
-        g_pVideoDevice->SetTexture(0, p_texture);
-		g_pVideoDevice->SetPixelShader(m_pPixelTexturedShader);
-        g_pVideoDevice->SetVertexShader(m_pVertexShader);
-        g_pVideoDevice->SetVertexDeclaration(m_pVertexDecl);
-        g_pVideoDevice->SetStreamSource(0, vb, 0, sizeof (DrawVerticeFormats));
-
-        g_pVideoDevice->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-#else
         //DrawVerticeFormats *v = (DrawVerticeFormats *) malloc(len);
 
         Xe_VBBegin(g_pVideoDevice, sizeof (DrawVerticeFormats));
@@ -268,7 +250,6 @@ namespace ZLX {
         Xe_SetShader(g_pVideoDevice, SHADER_TYPE_PIXEL, m_pPixelTexturedShader, 0);
         Xe_SetShader(g_pVideoDevice, SHADER_TYPE_VERTEX, m_pVertexShader, 0);
         Xe_DrawPrimitive(g_pVideoDevice, XE_PRIMTYPE_TRIANGLELIST, 0, 2);
-#endif
 	}
 
     void Draw::DrawColoredRect(float x, float y, float w, float h, ZLXColor color) {

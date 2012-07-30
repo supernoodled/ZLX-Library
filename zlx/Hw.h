@@ -16,7 +16,11 @@ namespace ZLX
         INIT_SOUND = 0x1,
         INIT_VIDEO = 0x2,
         INIT_USB = 0x4,
-        INIT_NETWORK = 0x8
+        INIT_NETWORK = 0x8,
+        INIT_ATA = 0x10,
+        INIT_ATAPI = 0x20,
+        INIT_FILESYSTEM = 0x40,
+        INIT_SFCX = 0x80
     };
 
     class Hw{

@@ -11,7 +11,7 @@ Browser App;
 char FUSES[256];
 int main() {
     
-    Hw::SystemInit(INIT_SOUND|INIT_VIDEO|INIT_USB);
+    Hw::SystemInit(INIT_SOUND|INIT_VIDEO|INIT_USB|INIT_ATA|INIT_ATAPI|INIT_FILESYSTEM|INIT_SFCX);
     {
         lpBrowserActionEntry action = new BrowserActionEntry();
         action->name = "Start HTTPD";

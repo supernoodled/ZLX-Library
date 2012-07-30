@@ -49,13 +49,23 @@ namespace ZLX
                 network_init();
             }
             
-            xenon_ata_init();
-            xenon_atapi_init();
+            if(flags & INIT_ATA){
+                xenon_ata_init();
+            }
             
-            mount_all_devices();
-            findDevices();
+            if(flags & INIT_ATAPI){
+                xenon_atapi_init();
+            }
             
-            sfcx_init();
+            if(flags & INIT_FILESYSTEM){
+				mount_all_devices();
+				findDevices();
+            }
+            
+            if(flags & INIT_SFCX){
+				sfcx_init();
+            }
+            
             init_flags = flags;
         }
     }
