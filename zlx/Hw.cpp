@@ -44,6 +44,7 @@ namespace ZLX
             }
             if(flags & INIT_USB){
                 usb_init();
+                usb_do_poll();
             }
             if(flags & INIT_NETWORK){
                 network_init();
