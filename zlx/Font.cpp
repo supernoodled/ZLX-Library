@@ -155,7 +155,7 @@ namespace ZLX {
         return GetScreenHeight() / 20.f;
     };
 
-    static FontVerticeFormats FontVerticePool[MAXCHAR];
+    static FontVerticeFormats FontVerticePool[MAXCHAR*6];
     static FontVerticeFormats ** p_fontVerticesBuffer = NULL;
 
     /**
@@ -419,25 +419,23 @@ namespace ZLX {
         vb->Release();
 
 #else
-        int len = iNbChar * 6 * sizeof (FontVerticeFormats);
+        int len = iNbChar * 6 * sizeof (FontVerticeFormats) / 4;
 
-        Xe_VBBegin(g_pVideoDevice, sizeof (FontVerticeFormats));
+        Xe_VBBegin(g_pVideoDevice, sizeof (FontVerticeFormats) / 4);
 
         int k = 0;
         for (int i = 0; i < iNbChar; i++) {
             for (int j = 0; j < 6; j++) {
-                memcpy(&FontVerticePool[k], &p_fontVerticesBuffer[i][j], sizeof (FontVerticeFormats));
+                FontVerticePool[k]=p_fontVerticesBuffer[i][j];
                 k++;
             }
         }
+				
         Xe_VBPut(g_pVideoDevice, FontVerticePool, len);
-
         XenosVertexBuffer *vb = Xe_VBEnd(g_pVideoDevice);
         Xe_VBPoolAdd(g_pVideoDevice, vb);
 
-        Xe_SetStreamSource(g_pVideoDevice, 0, vb, 0, sizeof (FontVerticeFormats));
-        Xe_DrawPrimitive(g_pVideoDevice, XE_PRIMTYPE_TRIANGLELIST, 0, iNbChar * 2);
-
+        Xe_Draw(g_pVideoDevice, vb, 0);
 #endif
 
     }

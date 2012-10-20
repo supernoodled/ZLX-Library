@@ -234,11 +234,9 @@ namespace ZLX {
         Rect[5].u = right;
         Rect[5].v = top;
         
-        int len = 6 * sizeof (DrawVerticeFormats);
-        //DrawVerticeFormats *v = (DrawVerticeFormats *) malloc(len);
+        int len = 6 * sizeof (DrawVerticeFormats) / 4;
 
-        Xe_VBBegin(g_pVideoDevice, sizeof (DrawVerticeFormats));
-        //memcpy(v, Rect, len);
+        Xe_VBBegin(g_pVideoDevice, sizeof (DrawVerticeFormats) / 4);
         Xe_VBPut(g_pVideoDevice, Rect, len);
 
         XenosVertexBuffer *vb = Xe_VBEnd(g_pVideoDevice);

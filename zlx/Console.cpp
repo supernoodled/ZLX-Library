@@ -4,6 +4,7 @@
 #include "Verdana_16_abc.h"
 #include "Verdana_16_png.h"
 #endif
+#include <xenon_uart/xenon_uart.h>
 
 static ZLXTexture * pFontTexture = NULL;
 
@@ -46,36 +47,32 @@ namespace ZLX {
         void * pFontData = NULL;
         unsigned int fontDataLength;
 
-        char stmp[256];
+		if(pRessourcePath)
+		{
+			char stmp[256];
 
-        sprintf(stmp, "%s%s", pRessourcePath, "font.abc");
+			sprintf(stmp, "%s%s", pRessourcePath, "font.abc");
 
-        LoadFile(stmp, &pFontData, &fontDataLength);
+			LoadFile(stmp, &pFontData, &fontDataLength);
 
-        //printf("Verdana_16_abc_size => 0%08x\r\n",Verdana_16_abc_size);
-#ifndef LIBXENON
-        if (pFontData == NULL) {
-            FatalError("Font.abc not found");
-            return X_FAIL;
-        }
-#else
-        //printf("Verdana_16_abc_size => 0%08x\r\n",Verdana_16_abc_size);
-        // if abc file is not found
-        if (pFontData == NULL) {
-            pFontData = (void*) Verdana_16_abc;
-        }
-#endif
-        sprintf(stmp, "%s%s", pRessourcePath, "font.png");
+			sprintf(stmp, "%s%s", pRessourcePath, "font.png");
+			
+	        LoadTextureFromFile(m_pVideoDevice, stmp, &pFontTexture);
+		}
 
-        LoadTextureFromFile(m_pVideoDevice, stmp, &pFontTexture);
 #ifdef LIBXENON
+		if (pFontData == NULL) {
+			pFontData = (void*) Verdana_16_abc;
+		}
+
         if (pFontTexture == NULL) {
             extern struct XenosSurface * loadPNGFromMemory(unsigned char *PNGdata);
             pFontTexture = loadPNGFromMemory((unsigned char*) Verdana_16_png);
         }
 #endif
-        if (pFontTexture == NULL) {
-            FatalError("Can't load texture font");
+
+        if (pFontTexture == NULL || pFontData == NULL) {
+            FatalError("Can't load font");
             return X_FAIL;
         }
 
@@ -151,16 +148,16 @@ namespace ZLX {
      * @param ...
      */
     void Console::Format(const char * format, ...) {
-        char buffer[256];
+        char buffer[1024];
         va_list args;
         va_start(args, format);
-        vsprintf(buffer, format, args);
+        vsnprintf(buffer, sizeof(buffer), format, args);
         va_end(args);
 
         // Output the string to the console
         unsigned int uStringLength = strlen(buffer);
         for (unsigned int i = 0; i < uStringLength; i++) {
-            Add(buffer[i]);
+			Add(buffer[i]);
         }
         // Next Format will be on a new line
         newLine();

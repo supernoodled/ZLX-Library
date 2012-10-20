@@ -520,13 +520,13 @@ namespace ZLX {
             uint64_t now = mftb();
 
             if(lChange[0]>0)
-            if(tb_diff_msec(now,lChange[0])>500){
+            if(tb_diff_msec(now,lChange[0])>250){
                 static int uh=0;
                 uh=!uh;
                 if (uh) up++;
             }
             if(lChange[1]>0)
-            if(tb_diff_msec(now,lChange[1])>500){
+            if(tb_diff_msec(now,lChange[1])>250){
                 static int dh=0;
                 dh=!dh;
                 if (dh) down++;
@@ -607,7 +607,7 @@ namespace ZLX {
                         // Exec action ...
                         //FileEntry currentEntry = vEntry.at(entrySelected);
                         lpBrowserActionEntry currentAction = vAction[actionSelected];
-                        if (currentAction->action != NULL) {
+                        if (currentAction != NULL && currentAction->action != NULL) {
                             currentAction->param = (void*) currentPath;
                             //currentAction->param = 
                             currentAction->action(currentAction);
