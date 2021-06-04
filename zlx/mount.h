@@ -45,7 +45,9 @@ extern "C" {
 static const char FAT_SIG[3] = {'F', 'A', 'T'};
 
 enum {
-	DEVICE_USB, // usb
+	DEVICE_USB_0, // usb
+	DEVICE_USB_1, // usb
+	DEVICE_USB_2, // usb
 	DEVICE_ATA, // hdd
 	DEVICE_ATAPI, // cdrom
 };
